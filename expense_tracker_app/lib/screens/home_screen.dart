@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (!state.isConfigured) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Expense Tracker')),
+        appBar: AppBar(title: const Text('Wealth Tracker')),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -109,7 +109,7 @@ class _OverviewTab extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Expense Tracker'),
+        title: const Text('Wealth Tracker'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

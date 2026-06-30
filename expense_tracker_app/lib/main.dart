@@ -22,7 +22,7 @@ class ExpenseTrackerApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => AppState(api)..init(),
       child: MaterialApp(
-        title: 'Expense Tracker',
+        title: 'Wealth Tracker',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(

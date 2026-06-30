@@ -1,4 +1,4 @@
-# Expense Tracker (Flutter + Google Sheets, no GCP)
+# Wealth Tracker (Flutter + Google Sheets, no GCP)
 
 Android expense and investment tracker that stores all data in **your own Google Sheet**. The app talks to the sheet through **Google Apps Script** deployed as a web app — no Google Cloud Platform project, service account, or API keys.
 
@@ -42,7 +42,7 @@ Your data stays in this spreadsheet on your Google account.
 **Prerequisites:** [Flutter SDK](https://docs.flutter.dev/get-started/install) with Android toolchain.
 
 ```powershell
-cd "d:\expense tracker\expense_tracker_app"
+cd "d:\\expense_tracker_app"
 flutter pub get
 flutter run
 ```
