@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/app_state.dart';
 import '../utils/formatters.dart';
+import '../widgets/hideable_amount.dart';
 import 'dashboard_screen.dart';
 import 'settings_screen.dart';
 import 'transactions_screen.dart';
@@ -242,8 +243,10 @@ class _QuickCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(title, style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 4),
-              Text(
-                amount,
+              HideableAmount(
+                amount: amount,
+                compact: true,
+                stacked: true, 
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: color,
                       fontWeight: FontWeight.bold,

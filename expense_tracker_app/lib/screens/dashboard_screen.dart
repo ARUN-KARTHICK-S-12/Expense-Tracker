@@ -186,7 +186,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             // ── Category filter ─────────────────────────────────────
             DropdownButtonFormField<String>(
-              value: selectedCategory,
+              initialValue: selectedCategory,
               decoration: const InputDecoration(
                 labelText: 'Category',
                 border: OutlineInputBorder(),
@@ -213,6 +213,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     title: 'Expense',
                     amount: formatAmount(totalExpense),
                     color: Colors.red,
+                    hideable: true,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -221,6 +222,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     title: 'Investment',
                     amount: formatAmount(totalInvestment),
                     color: Colors.green,
+                    hideable: true,
                   ),
                 ),
               ],
@@ -232,6 +234,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               title: 'Net Savings',
               amount: formatAmount(savings),
               color: savings >= 0 ? Colors.green : Colors.red,
+              hideable: true,
             ),
 
             const SizedBox(height: 24),
@@ -550,7 +553,7 @@ class _TrendChartCard extends StatelessWidget {
                 dotData: const FlDotData(show: true),
                 belowBarData: BarAreaData(
                   show: true,
-                  color: color.withOpacity(0.15),
+                  color: color.withValues(alpha: 0.15),
                 ),
               ),
             ],
@@ -610,7 +613,7 @@ class _CategoryBreakdown extends StatelessWidget {
                 const SizedBox(height: 6),
                 LinearProgressIndicator(
                   value: pct,
-                  backgroundColor: color.withOpacity(0.12),
+                  backgroundColor: color.withValues(alpha: 0.12),
                   color: color,
                   minHeight: 6,
                   borderRadius: BorderRadius.circular(4),

@@ -1,8 +1,11 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/analytics_data.dart';
 import '../models/category_item.dart';
+import '../models/transaction_list_filter.dart';
 import '../models/transaction_record.dart';
 import '../services/sheets_api_service.dart';
 
@@ -11,6 +14,9 @@ class AppState extends ChangeNotifier {
 
   final SheetsApiService _api;
   final _uuid = const Uuid();
+
+  static const _expenseFilterPrefix = 'expense_list_filter';
+  static const _investmentFilterPrefix = 'investment_list_filter';
 
   bool loading = false;
   String? error;
@@ -22,15 +28,94 @@ class AppState extends ChangeNotifier {
   AnalyticsData? analytics;
   FilterPeriod analyticsPeriod = FilterPeriod.month;
   DateTime analyticsReferenceDate = DateTime.now();
+  TransactionListFilter expenseListFilter = const TransactionListFilter();
+  TransactionListFilter investmentListFilter = const TransactionListFilter();
 
   bool get isConfigured => _api.isConfigured;
 
+  TransactionListFilter transactionListFilter(bool isInvestment) =>
+      isInvestment ? investmentListFilter : expenseListFilter;
+
   Future<void> init() async {
     await _api.loadSavedUrl();
+    await _loadSavedFilters();
     if (_api.isConfigured) {
       await refreshAll();
     }
     notifyListeners();
+  }
+
+  void setTransactionListFilter(
+    bool isInvestment,
+    TransactionListFilter filter,
+  ) {
+    if (isInvestment) {
+      investmentListFilter = filter;
+    } else {
+      expenseListFilter = filter;
+    }
+    notifyListeners();
+    _persistListFilter(isInvestment, filter);
+  }
+
+  void resetTransactionListFilter(bool isInvestment) {
+    setTransactionListFilter(isInvestment, const TransactionListFilter());
+  }
+
+  Future<void> _loadSavedFilters() async {
+    final prefs = await SharedPreferences.getInstance();
+    expenseListFilter = _readListFilter(prefs, _expenseFilterPrefix);
+    investmentListFilter = _readListFilter(prefs, _investmentFilterPrefix);
+  }
+
+  TransactionListFilter _readListFilter(
+    SharedPreferences prefs,
+    String prefix,
+  ) {
+    return TransactionListFilter(
+      searchQuery: prefs.getString('${prefix}_search') ?? '',
+      category: prefs.getString('${prefix}_category'),
+      rangeStart: _parseStoredDate(prefs.getString('${prefix}_range_start')),
+      rangeEnd: _parseStoredDate(prefs.getString('${prefix}_range_end')),
+    );
+  }
+
+  DateTime? _parseStoredDate(String? value) =>
+      value != null ? DateTime.tryParse(value) : null;
+
+  Future<void> _persistListFilter(
+    bool isInvestment,
+    TransactionListFilter filter,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    final prefix =
+        isInvestment ? _investmentFilterPrefix : _expenseFilterPrefix;
+
+    await prefs.setString('${prefix}_search', filter.searchQuery);
+
+    if (filter.category != null && filter.category!.isNotEmpty) {
+      await prefs.setString('${prefix}_category', filter.category!);
+    } else {
+      await prefs.remove('${prefix}_category');
+    }
+
+    if (filter.rangeStart != null) {
+      await prefs.setString(
+        '${prefix}_range_start',
+        filter.rangeStart!.toIso8601String(),
+      );
+    } else {
+      await prefs.remove('${prefix}_range_start');
+    }
+
+    if (filter.rangeEnd != null) {
+      await prefs.setString(
+        '${prefix}_range_end',
+        filter.rangeEnd!.toIso8601String(),
+      );
+    } else {
+      await prefs.remove('${prefix}_range_end');
+    }
   }
 
   Future<void> saveWebAppUrl(String url) async {
